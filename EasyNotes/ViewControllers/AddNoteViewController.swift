@@ -28,7 +28,7 @@ final class AddNoteViewController: UIViewController, UITextViewDelegate {
     // MARK: - UITextViewDelegate - Placeholder
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.text == "Type Your text" {
+        if textView.text == "Type your text" {
             textView.text = ""
             textView.textColor = UIColor.black
         }
@@ -36,7 +36,7 @@ final class AddNoteViewController: UIViewController, UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text == "" {
-            textView.text = "Type Your text"
+            textView.text = "Type your text"
             textView.textColor = .lightGray
         }
     }
@@ -44,7 +44,7 @@ final class AddNoteViewController: UIViewController, UITextViewDelegate {
     ///Метод изменения цвета
     private func changeText() {
         if textView.text == "" {
-            textView.text = "Type Your text"
+            textView.text = "Type your text"
             textView.textColor = .lightGray
         }
     }
@@ -94,8 +94,7 @@ final class AddNoteViewController: UIViewController, UITextViewDelegate {
         
         textField.placeholder = "Title"
         
-        textField.backgroundColor = .systemGray6
-        textView.backgroundColor = .systemGray6
+        textField.backgroundColor = .white
         
         ///Делаем отступ текста от края
         textField.heightAnchor.constraint(equalToConstant: 35).isActive = true

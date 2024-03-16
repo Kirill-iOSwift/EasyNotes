@@ -39,7 +39,7 @@ final class NoteViewController: UIViewController {
     private func setupTableView() {
         view.addSubview(tableView)
         
-        //tableView.backgroundColor = .gray
+        tableView.backgroundColor = .lightGray
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
