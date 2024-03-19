@@ -34,9 +34,8 @@ final class StorageManager {
     //MARK: - CRUD
     
     ///Метод создает новую заметку
-    func create(noteTitle: String, noteText: String) {
+    func create(noteText: String) {
         let note = Note(context: viewContext)
-        note.title = noteTitle
         note.text = noteText
         note.id = UUID()
         note.date = Date()
@@ -56,8 +55,7 @@ final class StorageManager {
     }
     
     ///Метод обновляет заметку
-    func update(note: Note, newTitle: String, newText: String) {
-        note.title = newTitle
+    func update(note: Note, newText: String) {
         note.text = newText
         note.date = Date()
         saveContext()
@@ -74,14 +72,7 @@ final class StorageManager {
         let object = Note(context: viewContext)
         object.id = UUID()
         object.date = Date()
-        object.title = "First note"
-        object.text =
-"""
-- Movies
-- Sports
-- Food
-- Music
-"""
+        object.text = "First note"
     }
     
     //MARK: - Core Data Saving support

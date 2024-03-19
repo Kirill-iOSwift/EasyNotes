@@ -137,29 +137,24 @@ extension NoteViewController: UITableViewDelegate, UITableViewDataSource {
     
     //MARK: Table View Data Sourse
     
-    ///Колличество секций
-    func numberOfSections(in tableView: UITableView) -> Int {
-        notes.count
-    }
-    
     ///Колличество строк в секции
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        notes.count
     }
     
     ///Настраиваем ячеку
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let note = notes[indexPath.section]
+        let note = notes[indexPath.row]
         var content = cell.defaultContentConfiguration()
-        let time = dateToString(format: "HH:mm", date: note.date)
-        
-        content.text = "\(time ?? "") \(note.title ?? "")"
+        let time = dateToString(format: "HH:mm - dd.MM.yyyy", date: note.date)
+        cell.accessoryType = .disclosureIndicator
+        content.text = "\(time ?? "")"
         content.textProperties.font = .systemFont(ofSize: 16)
         content.textProperties.font = .boldSystemFont(ofSize: 16)
         content.secondaryText = note.text
-        content.secondaryTextProperties.numberOfLines = 2
+        content.secondaryTextProperties.numberOfLines = 1
         content.secondaryTextProperties.font = .systemFont(ofSize: 16)
         cell.contentConfiguration = content
         
@@ -172,7 +167,6 @@ extension NoteViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = AddNoteViewController()
         vc.note = notes[indexPath.row]
-        vc.textField.text = notes[indexPath.row].title
         vc.textView.text = notes[indexPath.row].text
         
         navigationController?.pushViewController(vc, animated: true)
@@ -186,12 +180,6 @@ extension NoteViewController: UITableViewDelegate, UITableViewDataSource {
             storageManager.delete(note: note)
             noteCountLabel.text = "Notes: \(notes.count)"
         }
-    }
-    
-    ///Тайтл для хедера
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let header = dateToString(format: "dd.MM.yyyy", date: notes[section].date)
-        return header
     }
 }
 

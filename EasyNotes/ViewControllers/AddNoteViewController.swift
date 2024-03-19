@@ -12,7 +12,6 @@ final class AddNoteViewController: UIViewController {
     // MARK: - Properties
     
     let textView = UITextView()
-    let textField = UITextField()
     var note: Note?
     
     // MARK: - Lifecycle methods
@@ -30,10 +29,8 @@ final class AddNoteViewController: UIViewController {
     @objc ///Метод сохраняет или обновляет заметку
     private func saveNote() {
         note == nil
-        ? StorageManager.shared.create(noteTitle: textField.text ?? "", noteText: textView.text ?? "")
-        : StorageManager.shared.update(note: note!, newTitle: textField.text ?? "", newText: textView.text ?? "")
-        
-        navigationController?.popViewController(animated: true)
+        ? StorageManager.shared.create(noteText: textView.text ?? "")
+        : StorageManager.shared.update(note: note!, newText: textView.text ?? "")
     }
     
     /// Метод настройки view
@@ -41,16 +38,15 @@ final class AddNoteViewController: UIViewController {
         
         title = "Write a note"
         view.backgroundColor = .systemGray6
+        navigationController?.navigationBar.backgroundColor = .systemGray6
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveNote))
         
-        view.addSubview(textField)
         view.addSubview(textView)
         
         textView.delegate = self
         
         textView.translatesAutoresizingMaskIntoConstraints = false
-        textField.translatesAutoresizingMaskIntoConstraints = false
     }
     
     ///Метод настройки subview
@@ -58,37 +54,20 @@ final class AddNoteViewController: UIViewController {
         
         ///Скругляем углы subview
         textView.layer.cornerRadius = 10
-        textField.layer.cornerRadius = 10
             
         ///Выставляем размер шрифта
         textView.font = UIFont.systemFont(ofSize: 16)
-        textField.font = UIFont.systemFont(ofSize: 16)
         
         ///Меняем цвет курсора
-        textField.tintColor = .black
         textView.tintColor = .black
-        
-        textField.placeholder = "Title"
-        
-        textField.backgroundColor = .white
-        
-        ///Делаем отступ текста от края
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: textField.frame.height))
-        textField.leftViewMode = .always
-        
     }
     
     ///Метод установки констрейнтов
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            ///TextField
-            textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            textField.heightAnchor.constraint(equalToConstant: 35),
             
             ///TextView
-            textView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20),
+            textView.topAnchor.constraint(equalTo: view.topAnchor),
             textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             textView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40)
