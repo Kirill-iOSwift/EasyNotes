@@ -58,12 +58,12 @@ final class NoteViewController: UIViewController {
         tableView.dataSource = self
         
         noteCountLabel.font = UIFont(name: "system", size: 30)
-            
+        
         buttunAdd.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
         buttunAdd.tintColor = .black
         buttunAdd.contentVerticalAlignment = .fill
         buttunAdd.contentHorizontalAlignment = .fill
-        buttunAdd.addTarget(self, action: #selector(pushNextVC), for: .touchUpInside)
+        buttunAdd.addTarget(self, action: #selector(showAddVC), for: .touchUpInside)
     }
     
     private func setConstraints() {
@@ -97,7 +97,7 @@ final class NoteViewController: UIViewController {
     }
     
     @objc ///Метод перехода
-    private func pushNextVC() {
+    private func showAddVC() {
         navigationController?.pushViewController(AddNoteViewController(), animated: true)
     }
     
@@ -120,6 +120,15 @@ final class NoteViewController: UIViewController {
             }
         }
     }
+    
+    ///Метод форматирования даты и времени
+    private func dateToString(format: String, date: Date?) -> String? {
+        guard let date = date else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        let str = formatter.string (from: date)
+        return str
+    }
 }
 
 //MARK: - Methods Protokols
@@ -128,20 +137,32 @@ extension NoteViewController: UITableViewDelegate, UITableViewDataSource {
     
     //MARK: Table View Data Sourse
     
+    ///Колличество секций
+    func numberOfSections(in tableView: UITableView) -> Int {
+        notes.count
+    }
+    
     ///Колличество строк в секции
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        notes.count
+        1
     }
     
     ///Настраиваем ячеку
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let note = notes[indexPath.row]
+        let note = notes[indexPath.section]
         var content = cell.defaultContentConfiguration()
-        content.text = "\(note.date?.formatted() ?? "") \(note.title ?? "")"
+        let time = dateToString(format: "HH:mm", date: note.date)
+        
+        content.text = "\(time ?? "") \(note.title ?? "")"
+        content.textProperties.font = .systemFont(ofSize: 16)
+        content.textProperties.font = .boldSystemFont(ofSize: 16)
         content.secondaryText = note.text
+        content.secondaryTextProperties.numberOfLines = 2
+        content.secondaryTextProperties.font = .systemFont(ofSize: 16)
         cell.contentConfiguration = content
+        
         return cell
     }
     
@@ -157,7 +178,7 @@ extension NoteViewController: UITableViewDelegate, UITableViewDataSource {
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    ///Метод удаления ячеки свайпом влево
+    ///Метод удаления ячейки свайпом влево
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let note = notes.remove(at: indexPath.row)
@@ -165,6 +186,12 @@ extension NoteViewController: UITableViewDelegate, UITableViewDataSource {
             storageManager.delete(note: note)
             noteCountLabel.text = "Notes: \(notes.count)"
         }
+    }
+    
+    ///Тайтл для хедера
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let header = dateToString(format: "dd.MM.yyyy", date: notes[section].date)
+        return header
     }
 }
 
