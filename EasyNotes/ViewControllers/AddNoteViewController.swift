@@ -28,9 +28,12 @@ final class AddNoteViewController: UIViewController {
     
     @objc ///Метод сохраняет или обновляет заметку
     private func saveNote() {
-        note == nil
-        ? StorageManager.shared.create(noteText: textView.text ?? "")
-        : StorageManager.shared.update(note: note!, newText: textView.text ?? "")
+        if note == nil {
+            StorageManager.shared.create(noteText: textView.text ?? "")
+        } else {
+            guard let note = note else { return }
+            StorageManager.shared.update(note: note, newText: textView.text ?? "")
+        }
     }
     
     /// Метод настройки view

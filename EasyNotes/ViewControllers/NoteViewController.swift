@@ -119,6 +119,7 @@ final class NoteViewController: UIViewController {
                 print(error.localizedDescription)
             }
         }
+        notes.sort { $0.date ?? Date() > $1.date ?? Date() }
     }
     
     ///Метод форматирования даты и времени
@@ -148,13 +149,14 @@ extension NoteViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let note = notes[indexPath.row]
         var content = cell.defaultContentConfiguration()
-        let time = dateToString(format: "HH:mm - dd.MM.yyyy", date: note.date)
+        let time = dateToString(format: "HH:mm - dd.MM.yy", date: note.date)
+        
         cell.accessoryType = .disclosureIndicator
         content.text = "\(time ?? "")"
         content.textProperties.font = .systemFont(ofSize: 16)
         content.textProperties.font = .boldSystemFont(ofSize: 16)
         content.secondaryText = note.text
-        content.secondaryTextProperties.numberOfLines = 1
+        content.secondaryTextProperties.numberOfLines = 2
         content.secondaryTextProperties.font = .systemFont(ofSize: 16)
         cell.contentConfiguration = content
         
