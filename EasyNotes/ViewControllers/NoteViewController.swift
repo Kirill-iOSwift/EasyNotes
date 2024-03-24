@@ -14,15 +14,17 @@ final class NoteViewController: UIViewController {
     private var notes: [Note] = []
     private let storageManager = StorageManager.shared
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
-    private var firstStart = true
+    private let viewBottom = UIView()
+    private let noteCountLabel = UILabel()
+    private let buttunAdd = UIButton()
     
     // MARK: - Lifecycle methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupUI()
         setupNavigationBar()
-        setupTableView()
+        setConstraints()
         fetchData()
         getFirstObject()
     }
@@ -30,28 +32,60 @@ final class NoteViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchData()
+        noteCountLabel.text = "Notes: \(notes.count)"
         tableView.reloadData()
     }
     
     //MARK: - Private methods
     
     ///Метод настройки таблицы
-    private func setupTableView() {
+    private func setupUI() {
         view.addSubview(tableView)
-        
-        tableView.backgroundColor = .lightGray
+        view.addSubview(viewBottom)
+        view.addSubview(noteCountLabel)
+        view.addSubview(buttunAdd)
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        viewBottom.translatesAutoresizingMaskIntoConstraints = false
+        noteCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        buttunAdd.translatesAutoresizingMaskIntoConstraints = false
         
+        tableView.backgroundColor = .systemGray6
+        viewBottom.backgroundColor = .systemGray6
+        
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
         tableView.dataSource = self
         
+        noteCountLabel.font = UIFont(name: "system", size: 30)
+        
+        buttunAdd.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
+        buttunAdd.tintColor = .black
+        buttunAdd.contentVerticalAlignment = .fill
+        buttunAdd.contentHorizontalAlignment = .fill
+        buttunAdd.addTarget(self, action: #selector(showAddVC), for: .touchUpInside)
+    }
+    
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            viewBottom.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            viewBottom.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            viewBottom.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            viewBottom.heightAnchor.constraint(equalToConstant: 100),
+            
+            noteCountLabel.centerXAnchor.constraint(equalTo: viewBottom.centerXAnchor),
+            noteCountLabel.centerYAnchor.constraint(equalTo: viewBottom.centerYAnchor),
+            
+            buttunAdd.heightAnchor.constraint(equalToConstant: 40),
+            buttunAdd.widthAnchor.constraint(equalToConstant: 40),
+            
+            buttunAdd.trailingAnchor.constraint(equalTo: viewBottom.trailingAnchor, constant: -30),
+            buttunAdd.centerYAnchor.constraint(equalTo: viewBottom.centerYAnchor)
         ])
     }
     
@@ -60,17 +94,10 @@ final class NoteViewController: UIViewController {
         title = "Note List"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.tintColor = .black
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Add",
-            style: .plain,
-            target: self,
-            action: #selector(pushNextVC)
-        )
     }
     
     @objc ///Метод перехода
-    private func pushNextVC() {
+    private func showAddVC() {
         navigationController?.pushViewController(AddNoteViewController(), animated: true)
     }
     
@@ -92,44 +119,68 @@ final class NoteViewController: UIViewController {
                 print(error.localizedDescription)
             }
         }
+        notes.sort { $0.date ?? Date() > $1.date ?? Date() }
+    }
+    
+    ///Метод форматирования даты и времени
+    private func dateToString(format: String, date: Date?) -> String? {
+        guard let date = date else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        let str = formatter.string (from: date)
+        return str
     }
 }
 
+//MARK: - Methods Protokols
+
 extension NoteViewController: UITableViewDelegate, UITableViewDataSource {
     
-    //MARK: - Table View Data Sourse
-
+    //MARK: Table View Data Sourse
+    
+    ///Колличество строк в секции
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         notes.count
     }
     
+    ///Настраиваем ячеку
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let note = notes[indexPath.row]
         var content = cell.defaultContentConfiguration()
-        content.text = note.title
+        let time = dateToString(format: "HH:mm - dd.MM.yy", date: note.date)
+        
+        cell.accessoryType = .disclosureIndicator
+        content.text = "\(time ?? "")"
+        content.textProperties.font = .systemFont(ofSize: 16)
+        content.textProperties.font = .boldSystemFont(ofSize: 16)
         content.secondaryText = note.text
+        content.secondaryTextProperties.numberOfLines = 2
+        content.secondaryTextProperties.font = .systemFont(ofSize: 16)
         cell.contentConfiguration = content
+        
         return cell
     }
     
-    //MARK: - Table View Delegate
+    //MARK: Table View Delegate
     
+    ///При нажатии на ячейку переходим на экран редактирования и переносим данные
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = AddNoteViewController()
         vc.note = notes[indexPath.row]
-        vc.textField.text = notes[indexPath.row].title
         vc.textView.text = notes[indexPath.row].text
         
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    ///Метод удаления ячейки свайпом влево
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let note = notes.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
             storageManager.delete(note: note)
+            noteCountLabel.text = "Notes: \(notes.count)"
         }
     }
 }
