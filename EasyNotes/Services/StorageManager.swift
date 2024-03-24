@@ -9,12 +9,13 @@ import CoreData
 
 final class StorageManager {
     
+    ///Синглтон
     static let shared = StorageManager()
     
     //MARK: - Core Data stack
     
+    ///Создаем контейнер
     private let persistentContainer: NSPersistentContainer = {
-        ///Создаем контейнер
         let container = NSPersistentContainer(name: "EasyNotes")
         container.loadPersistentStores { _, error in
             if let error = error as NSError? {
