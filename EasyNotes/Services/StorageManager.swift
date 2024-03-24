@@ -7,6 +7,8 @@
 
 import CoreData
 
+//MARK: - class StorageManager
+
 final class StorageManager {
     
     ///Синглтон
