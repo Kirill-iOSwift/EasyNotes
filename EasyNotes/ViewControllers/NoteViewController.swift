@@ -127,8 +127,8 @@ final class NoteViewController: UIViewController {
         guard let date = date else { return "" }
         let formatter = DateFormatter()
         formatter.dateFormat = format
-        let str = formatter.string (from: date)
-        return str
+        let stringData = formatter.string (from: date)
+        return stringData
     }
 }
 
