@@ -7,9 +7,9 @@
 - удалать заметки
 - редактировать заметки
 
-<img width="469" alt="Снимок экрана 2024-03-16 в 19 22 05" src="https://github.com/Kirill-iOSwift/EasyNotes/assets/133357229/35dde2fe-bb8b-4b8f-a451-bb854f6b3312">
-<img width="469" alt="Снимок экрана 2024-03-16 в 19 30 02" src="https://github.com/Kirill-iOSwift/EasyNotes/assets/133357229/defd8946-82d4-4a60-8b78-ab8b8c57985a">
-<img width="469" alt="Снимок экрана 2024-03-16 в 19 29 52" src="https://github.com/Kirill-iOSwift/EasyNotes/assets/133357229/480fc184-feb6-4c54-af5d-7ba0a0ab458a">
+![Simulator Screenshot - iPhone 15 Pro - 2024-04-24 at 19 33 16](https://github.com/Kirill-iOSwift/EasyNotes/assets/133357229/55b23de3-e217-48ec-8ed1-c61a1c81b1c2)
+![Simulator Screenshot - iPhone 15 Pro - 2024-04-24 at 19 33 27](https://github.com/Kirill-iOSwift/EasyNotes/assets/133357229/416e990d-d1db-4472-b06c-981e5dcecd0f)
+
 
 ***
 
